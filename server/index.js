@@ -5,7 +5,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-mongoose.connect(process.env.DB_URI)
+mongoose
+  .connect(process.env.DB_URI)
   .then(() => {
     console.log('DATABASE OK');
   })
@@ -24,10 +25,14 @@ app.get('/', (req, res) => {
 app.post('/auth/sign_in', (req, res) => {
   const { email, password } = req.body;
 
-  const token = jwt.sign({
-    email,
-    password,
-  }, 'secret', { expiresIn: '2m' });
+  const token = jwt.sign(
+    {
+      email,
+      password,
+    },
+    'secret',
+    { expiresIn: '2m' }
+  );
 
   res.json({
     success: true,
