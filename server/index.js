@@ -10,13 +10,14 @@ import UserModel from './models/User.js';
 
 dotenv.config();
 
-mongoose.connect(process.env.DB_URI)
+mongoose
+  .connect(process.env.DB_URI)
   .then(() => {
     console.log('DATABASE OK');
   })
   .catch((err) => {
     console.log('DATABASE ERROR', err);
-  })
+  });
 
 const sc = simplecrypt();
 
@@ -49,7 +50,7 @@ app.post('/auth/sign_up', signUpValidation, async (req, res) => {
 
 app.listen(4444, (err) => {
   if (err) {
-    return console.log(err)
+    return console.log(err);
   }
 
   console.log('SERVER OK');
