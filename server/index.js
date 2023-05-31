@@ -1,7 +1,12 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import simplecrypt from 'simplecrypt';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { validationResult } from 'express-validator';
+
+import { signUpValidation } from './validations/SignUp.js';
+import UserModel from './models/User.js';
 
 dotenv.config();
 
@@ -13,26 +18,33 @@ mongoose.connect(process.env.DB_URI)
     console.log('DATABASE ERROR', err);
   })
 
+const sc = simplecrypt();
+
 const app = express();
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello, friend!!!');
-});
+app.post('/auth/sign_up', signUpValidation, async (req, res) => {
+  const errors = validationResult(req);
 
-app.post('/auth/sign_in', (req, res) => {
-  const { email, password } = req.body;
+  if (!errors.isEmpty()) {
+	  return res.status(400).json({ errors: errors.array() });
+  }
 
-  const token = jwt.sign({
+  const { email, password,  fullName, avatarUrl } = req.body;
+
+  const passwordHash = sc.encrypt(password);
+
+  const doc = new UserModel({
 	  email,
-	  password,
-  }, 'secret', { expiresIn: '2m' });
+	  passwordHash,
+    fullName,
+    avatarUrl,
+  });
 
-  res.json({
-    success: true,
-    token,
-  })
+  const user = await doc.save();
+
+  res.json(user);
 });
 
 app.listen(4444, (err) => {
