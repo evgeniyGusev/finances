@@ -8,6 +8,8 @@ dotenv.config();
 
 const app = express();
 
+app.use(express.static('../client/dist'));
+
 app.use(express.json());
 app.use(cors());
 
