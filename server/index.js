@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+
 import authRouter from './routes/auth.js';
 
 dotenv.config();
@@ -12,6 +14,7 @@ app.use(express.static('../client/dist'));
 
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
 app.use('/api/auth', authRouter);
 

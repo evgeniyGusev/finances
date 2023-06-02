@@ -1,8 +1,8 @@
 import { validationResult } from 'express-validator';
 import bcryptjs from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 import UserModel from '../models/User.js';
+import { generateToken } from '../utils/token.js';
 
 // signUp
 export const signUpController = async (req, res) => {
@@ -10,7 +10,7 @@ export const signUpController = async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ message: 'Невалидные данные' });
     }
 
     const { email, password, fullName, avatarUrl } = req.body;
@@ -27,7 +27,7 @@ export const signUpController = async (req, res) => {
 
     await newUser.save();
 
-    res.json({
+    res.status(201).json({
       success: true,
     });
   } catch (e) {
@@ -35,7 +35,7 @@ export const signUpController = async (req, res) => {
       return res.status(400).json({ message: 'Email уже используется' });
     }
 
-    res.status(400).json(e);
+    res.status(500).json({ error: e.message });
   }
 };
 
@@ -45,7 +45,7 @@ export const signInController = async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ message: 'Неверный логин или пароль' });
     }
 
     const { email, password } = req.body;
@@ -54,74 +54,58 @@ export const signInController = async (req, res) => {
 
     if (user) {
       if (bcryptjs.compareSync(password, user.passwordHash)) {
-        const token = jwt.sign(
-          {
-            id: user._id,
-          },
-          process.env.JWT_SECRET,
-          {
-            expiresIn: '1m',
-          }
-        );
+        const token = generateToken(user._id);
 
-        const userRes = {
-          id: user._id,
-          token,
-          fullName: user.fullName,
-          avatarUrl: user.avatarUrl,
-          email: user.email,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-        };
+        const { passwordHash, ...userRes } = user._doc;
 
-        return res.json({
-          success: true,
-          user: userRes,
-        });
+        return res
+          .cookie('access_token', token, {
+            httpOnly: true,
+          })
+          .json({
+            success: true,
+            user: userRes,
+          });
       }
 
-      return res.status(400).json({ message: 'Неверный пароль' });
+      return res.status(400).json({ message: 'Неверный логин или пароль' });
     }
 
-    return res.status(400).json({ message: 'Пользователь не найден' });
+    return res.status(400).json({ message: 'Неверный логин или пароль' });
   } catch (e) {
-    res.status(400).json(e);
+    res.status(500).json({ error: e.message });
   }
 };
 
+// signOut
+export const signOutController = async (req, res) => {
+  try {
+    return res.clearCookie('access_token').json({
+      success: true,
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
+// currentUser
 export const currentUserController = async (req, res) => {
   try {
     const user = await UserModel.findById(req.userId);
 
     if (!user) {
-      return res.status(400).json({ message: 'Пользователь не найден' });
+      return res
+        .status(400)
+        .json({ access: false, message: 'Пользователь не найден' });
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '1m',
-      }
-    );
-
-    const userRes = {
-      id: user._id,
-      token,
-      fullName: user.fullName,
-      avatarUrl: user.avatarUrl,
-      email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    const { passwordHash, ...userRes } = user._doc;
 
     return res.json({
-      success: true,
+      access: true,
       user: userRes,
     });
   } catch (e) {
-    res.status(400).json(e);
+    res.status(500).json({ access: false, error: e.message });
   }
 };

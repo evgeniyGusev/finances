@@ -1,16 +1,20 @@
 import jwt from 'jsonwebtoken';
 
 export default function checkAuth(req, res, next) {
-  const token = req.headers.authorization.replace('Bearer', '') || '';
+  const token = req.cookies.access_token;
 
-  if (!token) return res.status(401).send({ message: 'Нет доступа' });
+  if (!token) {
+    return res.status(401).json({ access: false });
+  }
 
-  try {
-    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+  jwt.verify(token, process.env.JWT_SECRET, (err, { id }) => {
+    console.log(id);
+    if (err) {
+      return res.status(401).json({ access: false });
+    }
 
     req.userId = id;
+
     next();
-  } catch (e) {
-    res.status(401).send({ message: 'Нет доступаffff' });
-  }
+  });
 }
