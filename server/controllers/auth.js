@@ -89,4 +89,39 @@ export const signInController = async (req, res) => {
   }
 };
 
-export const currentUserController = async () => {};
+export const currentUserController = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.userId);
+
+    if (!user) {
+      return res.status(400).json({ message: 'Пользователь не найден' });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '1m',
+      }
+    );
+
+    const userRes = {
+      id: user._id,
+      token,
+      fullName: user.fullName,
+      avatarUrl: user.avatarUrl,
+      email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    return res.json({
+      success: true,
+      user: userRes,
+    });
+  } catch (e) {
+    res.status(400).json(e);
+  }
+};
