@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  client-lint:
+  client:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,7 +20,10 @@ jobs:
       - name: Lint
         working-directory: ./client
         run: npm run lint
-  server-lint:
+      - name: Build
+        working-directory: ./client
+        run: npm run build
+  server:
     runs-on: ubuntu-latest
     strategy:
       matrix:
