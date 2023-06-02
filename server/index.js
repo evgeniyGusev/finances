@@ -1,51 +1,34 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+
+import authRouter from './routes/auth.js';
 
 dotenv.config();
-
-mongoose
-  .connect(process.env.DB_URI)
-  .then(() => {
-    console.log('DATABASE OK');
-  })
-  .catch((err) => {
-    console.log('DATABASE ERROR', err);
-  });
 
 const app = express();
 
 app.use(express.static('../client/dist'));
 
 app.use(express.json());
+app.use(cors());
+app.use(cookieParser());
 
-app.get('/', (req, res) => {
-  res.send('Hello, friend!!!');
-});
+app.use('/api/auth', authRouter);
 
-app.post('/auth/sign_in', (req, res) => {
-  const { email, password } = req.body;
+mongoose
+  .connect(process.env.DB_URI)
+  .then(() => {
+    app.listen(4444, (err) => {
+      if (err) {
+        return console.log(err);
+      }
 
-  const token = jwt.sign(
-    {
-      email,
-      password,
-    },
-    'secret',
-    { expiresIn: '2m' }
-  );
-
-  res.json({
-    success: true,
-    token,
+      console.log('SERVER OK');
+    });
+  })
+  .catch((err) => {
+    console.log('DATABASE ERROR', err);
   });
-});
-
-app.listen(4444, (err) => {
-  if (err) {
-    return console.log(err);
-  }
-
-  console.log('SERVER OK');
-});

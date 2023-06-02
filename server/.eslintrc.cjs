@@ -6,6 +6,9 @@ module.exports = {
 	ignorePatterns: ['node-modules', 'package-lock.json'],
 
 	rules: {
-		'consistent-return': 'off'
+		'consistent-return': 'off',
+		'import/extensions': 'off',
+		'import/no-extraneous-dependencies': 'off',
+		'no-underscore-dangle': 'off'
 	}
 }
