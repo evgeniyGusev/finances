@@ -7,13 +7,15 @@ export default function checkAuth(req, res, next) {
     return res.status(401).json({ access: false });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, { id }) => {
-    console.log(id);
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      return res.status(401).json({ access: false });
+      return res
+        .clearCookie('access_token')
+        .status(401)
+        .json({ access: false });
     }
 
-    req.userId = id;
+    req.userId = user?.id;
 
     next();
   });
