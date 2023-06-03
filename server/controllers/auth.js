@@ -10,7 +10,9 @@ export const signUpController = async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: 'Невалидные данные' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'Невалидные данные' });
     }
 
     const { email, password, fullName, avatarUrl } = req.body;
@@ -29,13 +31,18 @@ export const signUpController = async (req, res) => {
 
     res.status(201).json({
       success: true,
+      user: {
+        email,
+      },
     });
   } catch (e) {
     if (e.keyPattern.email) {
-      return res.status(400).json({ message: 'Email уже используется' });
+      return res
+        .status(400)
+        .json({ success: false, error: 'Email уже используется' });
     }
 
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ success: false, error: e.message });
   }
 };
 
@@ -45,7 +52,9 @@ export const signInController = async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: 'Неверный логин или пароль' });
+      return res
+        .status(400)
+        .json({ access: false, error: 'Неверный логин или пароль' });
     }
 
     const { email, password } = req.body;
@@ -63,17 +72,21 @@ export const signInController = async (req, res) => {
             httpOnly: true,
           })
           .json({
-            success: true,
+            access: true,
             user: userRes,
           });
       }
 
-      return res.status(400).json({ message: 'Неверный логин или пароль' });
+      return res
+        .status(400)
+        .json({ access: false, error: 'Неверный логин или пароль' });
     }
 
-    return res.status(400).json({ message: 'Неверный логин или пароль' });
+    return res
+      .status(400)
+      .json({ access: false, error: 'Неверный логин или пароль' });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ access: false, error: e.message });
   }
 };
 
@@ -81,10 +94,10 @@ export const signInController = async (req, res) => {
 export const signOutController = async (req, res) => {
   try {
     return res.clearCookie('access_token').json({
-      success: true,
+      access: true,
     });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ access: false, error: e.message });
   }
 };
 
@@ -96,7 +109,7 @@ export const currentUserController = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ access: false, message: 'Пользователь не найден' });
+        .json({ access: false, error: 'Пользователь не найден' });
     }
 
     const { passwordHash, ...userRes } = user._doc;
