@@ -1,62 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import { signIn, signUp } from '@/auth/services';
+import { useAuth } from '@/auth/hooks/useAuth';
+import { Spinner } from '@/common/components/Spinner';
 
 export const AuthForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [fullName, setFullName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
-
-  const navigate = useNavigate();
-
-  const login = async () => {
-    const result = await signIn({ email, password });
-
-    if (result.access) {
-      navigate('/');
-    } else {
-      alert('error' in result && result.error);
-    }
-  };
-
-  const register = async () => {
-    const result = await signUp({ email, password, fullName, avatarUrl });
-
-    if (result.success) {
-      console.log('TUTTUTUT');
-      setEmail(result.user.email);
-      setPassword('');
-      setFullName('');
-      setAvatarUrl('');
-
-      setIsSignUp(false);
-
-      //TODO: Сделать фокус на пароль
-    } else {
-      alert('error' in result && result.error);
-    }
-  };
-
-  const switchFormType = () => {
-    setEmail('');
-    setPassword('');
-    setFullName('');
-    setAvatarUrl('');
-    setIsSignUp(!isSignUp);
-  };
-
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (isSignUp) {
-      await register();
-    } else {
-      await login();
-    }
-  };
+  const { form, isSignUp, isLoading, switchFormType, submit } = useAuth();
 
   return (
     <div className="w-80 p-8 bg-white rounded shadow-md dark:shadow-amber-50">
@@ -76,8 +22,8 @@ export const AuthForm = () => {
             className="shadow-md border border-solid border-gray-200 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:outline-blue-500/50"
             type="email"
             placeholder="example@example.com"
-            value={email}
-            onInput={(e) => setEmail(e.currentTarget.value)}
+            value={form.email}
+            onInput={(e) => form.setEmail(e.currentTarget.value)}
           />
         </div>
         <div className={`${isSignUp ? 'mb-4' : 'mb-6'}`}>
@@ -92,8 +38,8 @@ export const AuthForm = () => {
             className="shadow-md border border-solid border-gray-200 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:outline-blue-500/50"
             type="password"
             placeholder="****************"
-            value={password}
-            onInput={(e) => setPassword(e.currentTarget.value)}
+            value={form.password}
+            onInput={(e) => form.setPassword(e.currentTarget.value)}
           />
         </div>
 
@@ -111,8 +57,8 @@ export const AuthForm = () => {
                 className="shadow-md border border-solid border-gray-200 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:outline-blue-500/50"
                 type="text"
                 placeholder="Иванов Пётр | СуперМэн"
-                value={fullName}
-                onInput={(e) => setFullName(e.currentTarget.value)}
+                value={form.fullName}
+                onInput={(e) => form.setFullName(e.currentTarget.value)}
               />
             </div>
 
@@ -128,8 +74,8 @@ export const AuthForm = () => {
                 className="shadow-md border border-solid border-gray-200 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:outline-blue-500/50"
                 type="text"
                 placeholder="https://example.com/avatar.jpg"
-                value={avatarUrl}
-                onInput={(e) => setAvatarUrl(e.currentTarget.value)}
+                value={form.avatarUrl}
+                onInput={(e) => form.setAvatarUrl(e.currentTarget.value)}
               />
             </div>
           </>
@@ -141,12 +87,20 @@ export const AuthForm = () => {
           }`}
         >
           <button
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-              isSignUp ? 'mb-3' : ''
+            className={`flex justify-center items-center h-10 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed ${
+              isSignUp ? 'mb-3 w-3/4' : 'w-20'
             }`}
+            disabled={isLoading}
             type="submit"
           >
-            {isSignUp ? 'Зарегистрироваться' : 'Войти'}
+            {isLoading ? (
+              <Spinner />
+            ) : isSignUp ? (
+              'Зарегистрироваться'
+            ) : (
+              'Войти'
+            )}
+            {/*<Spinner />*/}
           </button>
           <button
             className="font-bold text-sm text-blue-500 hover:text-blue-800"

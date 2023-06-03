@@ -11,7 +11,5 @@ const root = createRoot(container!);
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
-console.log(import.meta.env.VITE_API_URL);
-
 // @ts-ignore
 root.render(<RouterProvider router={router} />);
