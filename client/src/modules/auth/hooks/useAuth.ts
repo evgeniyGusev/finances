@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { signIn, signUp } from '@/auth/services';
+import toast from '@/common/components/toast';
 
 export const useAuth = () => {
   const [email, setEmail] = useState('');
@@ -39,7 +40,10 @@ export const useAuth = () => {
     if (result.access) {
       navigate('/');
     } else {
-      alert('error' in result && result.error);
+      toast.error(
+        ('error' in result && (result.error as string)) ||
+          'Что-то пошла не так',
+      );
     }
   };
 
@@ -60,8 +64,13 @@ export const useAuth = () => {
       if (passwordField) {
         passwordField.focus();
       }
+
+      toast.success('Регистрация прошла успешна. Теперь можно выполнить вход');
     } else {
-      alert('error' in result && result.error);
+      toast.error(
+        ('error' in result && (result.error as string)) ||
+          'Что-то пошла не так',
+      );
     }
 
     setIsLoading(false);

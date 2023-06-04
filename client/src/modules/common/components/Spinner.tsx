@@ -1,4 +1,6 @@
-export const Spinner = () => {
+import { JSX } from 'react';
+
+export const Spinner = (): JSX.Element => {
   return (
     <div role="status">
       <svg

@@ -73,7 +73,6 @@ export const signInController = async (req, res) => {
           })
           .json({
             access: true,
-            user: userRes,
           });
       }
 
