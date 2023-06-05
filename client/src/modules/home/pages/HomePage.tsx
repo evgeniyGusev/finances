@@ -6,7 +6,7 @@ import toast from '@/common/components/toast';
 import { IUser } from '@/home/interfaces';
 import { getUser } from '@/home/services';
 import { Profile } from '@/profile/components/Profile';
-import { CurrencyLine } from '@/home/components/CurrencyLine';
+import { CurrencyLine } from '@/home/components/CurrencyLine/CurrencyLine';
 
 export const HomePage: React.FC = () => {
   const [user, setUser] = useState<IUser | null>(null);

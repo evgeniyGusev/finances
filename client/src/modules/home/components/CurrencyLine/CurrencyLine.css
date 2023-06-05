@@ -1,0 +1,14 @@
+.running-text {
+    display: inline-block;
+    animation: running-text-animation 20s linear infinite;
+}
+
+@keyframes running-text-animation {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
