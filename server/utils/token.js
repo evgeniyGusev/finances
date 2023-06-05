@@ -10,5 +10,3 @@ export const generateToken = (id) =>
       expiresIn: '1m',
     }
   );
-
-export const checkToken = () => {};
