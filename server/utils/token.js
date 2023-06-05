@@ -7,6 +7,6 @@ export const generateToken = (id) =>
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: '1m',
+      expiresIn: '7d',
     }
   );

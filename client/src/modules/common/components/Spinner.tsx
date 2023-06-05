@@ -1,11 +1,17 @@
-import { JSX } from 'react';
+import React, { PropsWithChildren } from 'react';
 
-export const Spinner = (): JSX.Element => {
+import { ISpinnerProps } from '@/common/interfaces';
+
+export const Spinner: React.FC<PropsWithChildren<ISpinnerProps>> = ({
+  size = '',
+}) => {
+  const spinnerSize = size === 'large' ? 'w-8 h-8' : 'w-4 h-4';
+
   return (
     <div role="status">
       <svg
         aria-hidden="true"
-        className="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+        className={`text-gray-200 animate-spin dark:text-gray-600 fill-blue-600 ${spinnerSize}`}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
