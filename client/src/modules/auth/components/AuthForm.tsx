@@ -74,7 +74,7 @@ export const AuthForm: React.FC = () => {
             type="submit"
           >
             {isLoading ? (
-              <Spinner />
+              <Spinner size="" />
             ) : isSignUp ? (
               'Зарегистрироваться'
             ) : (
