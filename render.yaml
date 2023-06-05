@@ -1,4 +1,0 @@
-services:
-  - name: server
-    buildCommand: npm ci --prefix server
-    startCommand: npm start --prefix server
