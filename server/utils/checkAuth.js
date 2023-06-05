@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 export default function checkAuth(req, res, next) {
-  const token = req.cookies.access_token;
+  const token = req.headers.access_token;
 
   if (!token) {
     return res.status(401).json({ access: false });
