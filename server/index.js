@@ -4,10 +4,14 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { fileURLToPath } from 'url';
 
 import authRouter from './routes/auth.js';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -19,12 +23,12 @@ app.use(cookieParser());
 app.use('/api/auth', authRouter);
 
 // static files
-app.use(express.static('../client/dist'));
+const staticDir = path.join(__dirname, '..', 'client', 'dist');
+
+app.use(express.static(staticDir));
 
 // frontend router
-app.get('*', (req, res) =>
-  res.sendFile(path.resolve('..', 'client', 'dist', 'index.html'))
-);
+app.get('*', (req, res) => res.sendFile(path.join(staticDir, 'index.html')));
 
 mongoose
   .connect(process.env.DB_URI)
