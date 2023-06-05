@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Spinner } from '@/common/components/Spinner';
 import toast from '@/common/components/toast';
 import { IUser } from '@/home/interfaces';
 import { getUser } from '@/home/services';
+import { Profile } from '@/profile/components/Profile';
+import { CurrencyLine } from '@/home/components/CurrencyLine';
 
 export const HomePage: React.FC = () => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -29,9 +32,21 @@ export const HomePage: React.FC = () => {
       });
   }, []);
 
+  if (user) {
+    return (
+      <>
+        <CurrencyLine />
+        <Profile user={user} />
+      </>
+    );
+  }
+
   return (
-    <div>
-      <pre>{user?.email || 'sss'}</pre>
+    <div className="w-full h-full flex flex-col justify-center items-center">
+      <Spinner size="large" />
+      <div className="text-sm text-gray-500 flex justify-center items-center mt-4">
+        Загружаем профиль... 😎
+      </div>
     </div>
   );
 };
