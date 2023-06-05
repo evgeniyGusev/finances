@@ -1,8 +1,10 @@
+import React from 'react';
+
 import { useAuth } from '@/auth/hooks/useAuth';
 import { Input } from '@/common/components/Input';
 import { Spinner } from '@/common/components/Spinner';
 
-export const AuthForm = () => {
+export const AuthForm: React.FC = () => {
   const { form, isSignUp, isLoading, switchFormType, submit } = useAuth();
 
   return (
@@ -17,6 +19,7 @@ export const AuthForm = () => {
           type={'email'}
           placeholder={'example@example.com'}
           value={form.email}
+          required={true}
           onInput={(e) => form.setEmail(e.currentTarget.value)}
         >
           Почта
@@ -28,6 +31,7 @@ export const AuthForm = () => {
           type={'password'}
           placeholder={'****************'}
           value={form.password}
+          required={true}
           onInput={(e) => form.setPassword(e.currentTarget.value)}
         >
           Пароль
@@ -38,6 +42,7 @@ export const AuthForm = () => {
             <Input
               id={'name'}
               placeholder={'Иванов Пётр | СуперМэн'}
+              required={true}
               value={form.fullName}
               onInput={(e) => form.setFullName(e.currentTarget.value)}
             >

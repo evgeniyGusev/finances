@@ -65,15 +65,10 @@ export const signInController = async (req, res) => {
       if (bcryptjs.compareSync(password, user.passwordHash)) {
         const token = generateToken(user._id);
 
-        const { passwordHash, ...userRes } = user._doc;
-
-        return res
-          .cookie('access_token', token, {
-            httpOnly: true,
-          })
-          .json({
-            access: true,
-          });
+        return res.json({
+          access: true,
+          token,
+        });
       }
 
       return res
@@ -92,7 +87,7 @@ export const signInController = async (req, res) => {
 // signOut
 export const signOutController = async (req, res) => {
   try {
-    return res.clearCookie('access_token').json({
+    return res.json({
       access: true,
     });
   } catch (e) {

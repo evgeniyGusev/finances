@@ -6,16 +6,7 @@ export interface ISignInPayload {
 
 export interface ISignInResponseSuccess {
   access: boolean;
-  user: {
-    _id: string;
-    fullName: string;
-    email: string;
-    avatarUrl: string;
-    budgets: [];
-    createdAt: string;
-    updatedAt: string;
-    __v?: number;
-  };
+  token: string;
 }
 
 // signUp

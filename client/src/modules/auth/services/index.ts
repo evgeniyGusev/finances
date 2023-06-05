@@ -13,6 +13,9 @@ export const signIn = async (
   try {
     const { data } = await axios.post('/api/auth/sign_in', payload);
 
+    localStorage.setItem('access_token', data.token);
+    axios.defaults.headers.access_token = data.token;
+
     return data;
   } catch (error: any) {
     return error?.response?.data;

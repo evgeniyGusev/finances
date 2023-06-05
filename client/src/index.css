@@ -35,7 +35,6 @@
 
 .uiToast {
   position: relative;
-  max-width: 500px;
   padding: 16px 32px;
   color: #fff;
   cursor: default;
