@@ -84,6 +84,32 @@ export const signInController = async (req, res) => {
   }
 };
 
+// updateUser
+export const updateUserController = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.userId);
+
+    if (user) {
+      user.wallets = [...user.wallets, ...req.body.wallets];
+
+      await user.save();
+
+      const { passwordHash, ...userRes } = user._doc;
+
+      return res.json({
+        access: true,
+        user: userRes,
+      });
+    }
+
+    return res
+      .status(400)
+      .json({ access: false, error: 'Не удалось обновить данные' });
+  } catch (e) {
+    res.status(500).json({ access: false, error: e.message });
+  }
+};
+
 // signOut
 export const signOutController = async (req, res) => {
   try {

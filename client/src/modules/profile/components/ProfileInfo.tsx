@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from 'react';
 
-import { ReactComponent as PencilIcon } from '@/common/icons/pencil.svg';
 import { ReactComponent as LogOutIcon } from '@/common/icons/logout.svg';
+import { ReactComponent as PencilIcon } from '@/common/icons/pencil.svg';
 import { IProfileInfoProps } from '@/profile/interfaces';
 
 export const ProfileInfo: React.FC<PropsWithChildren<IProfileInfoProps>> = ({

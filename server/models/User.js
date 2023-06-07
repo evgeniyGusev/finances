@@ -16,12 +16,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
     avatarUrl: String,
-    budgets: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Budget',
-      },
-    ],
+    wallets: [{}],
   },
   {
     timestamps: true,
